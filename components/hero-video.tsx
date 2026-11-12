@@ -11,20 +11,35 @@ export function HeroVideo() {
     const video = videoRef.current
     if (!video) return
 
+    // React does not reliably set `muted` on the DOM node during hydration, and
+    // browsers block autoplay of unmuted video, so enforce it imperatively.
+    video.muted = true
+    video.defaultMuted = true
+    video.setAttribute('muted', '')
+
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const sync = () => {
       if (reducedMotion.matches) {
         video.pause()
-        video.currentTime = 0
-      } else {
-        video.play().catch(() => {})
+        return
       }
+      if (video.paused) video.play().catch(() => {})
+    }
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') sync()
     }
 
     sync()
+    video.addEventListener('canplay', sync)
     reducedMotion.addEventListener('change', sync)
-    return () => reducedMotion.removeEventListener('change', sync)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      video.removeEventListener('canplay', sync)
+      reducedMotion.removeEventListener('change', sync)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
   }, [])
 
   return (
@@ -32,6 +47,7 @@ export function HeroVideo() {
       ref={videoRef}
       aria-hidden="true"
       tabIndex={-1}
+      autoPlay
       muted
       loop
       playsInline
