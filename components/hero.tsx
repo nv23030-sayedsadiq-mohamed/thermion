@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import Link from 'next/link'
+import { HeroVideo } from '@/components/hero-video'
 import { ArrowRight } from 'lucide-react'
 import type { Dictionary } from '@/lib/i18n/dictionaries'
 import { routes } from '@/lib/routes'
@@ -7,15 +7,8 @@ import { routes } from '@/lib/routes'
 export function Hero({ dict }: { dict: Dictionary['hero'] }) {
   return (
     <section className="relative isolate flex min-h-svh items-center justify-center overflow-hidden">
-      <Image
-        src="/images/hero-wildfire.png"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="-z-20 object-cover object-center"
-      />
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-background/45" />
+      <HeroVideo />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[rgba(8,10,12,0.30)]" />
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(12,11,10,0.35)_0%,rgba(12,11,10,0)_60%)]"
